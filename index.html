@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticketon Ops Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-ticket-alt"></i> T-Ops
+        </div>
+        <ul class="menu">
+            <li class="active" onclick="showTab('monitor')"><i class="fas fa-chart-bar"></i> Мониторинг (Sync)</li>
+            <li onclick="showTab('automation')"><i class="fas fa-robot"></i> Автоматизация</li>
+            <li onclick="showTab('vpn')"><i class="fas fa-network-wired"></i> VPN Config</li>
+        </ul>
+    </div>
+
+    <div class="main">
+        
+        <!-- Вкладка 1: МОНИТОРИНГ -->
+        <div id="monitor" class="tab-content active">
+            <header>
+                <h1>Концерт: Скриптонит (Almaty Arena)</h1>
+                <div class="server-status ok" id="gateway-status">Gateway: ONLINE</div>
+            </header>
+
+            <div class="dashboard">
+                <!-- Фан-зона (Счетчик) -->
+                <div class="card">
+                    <h3>🔥 Фан-зона (Fan Zone)</h3>
+                    <div class="progress">
+                        <div class="bar" style="width: 98%; background: #e74c3c;"></div>
+                    </div>
+                    <p>Квота: <span id="fan-sold">98</span> / 100</p>
+                    <small>Риск овербукинга!</small>
+                </div>
+
+                <!-- Сидячие-->
+                <div class="card">
+                    <h3>💺 Сектор А (Seated)</h3>
+                    <div class="progress">
+                        <div class="bar" style="width: 80%; background: #2ecc71;"></div>
+                    </div>
+                    <p>Продано: 400 / 500</p>
+                </div>
+            </div>
+
+            <!-- Таблица рассинхрона -->
+            <div class="incident-box">
+                <h2>🚨 Очередь транзакций (Sync Issues)</h2>
+                <p>Транзакции, где оплата прошла, а билет завис из-за сбоя шлюза.</p>
+                <button class="simulate-crash-btn" onclick="simulateCrash()">💥 Имитировать падение шлюза</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Клиент</th>
+                            <th>Зона</th>
+                            <th>Статус Банка</th>
+                            <th>Статус Билета</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sync-table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка 2: Промики -->
+        <div id="automation" class="tab-content">
+            <h1>🛠 Генератор Промокодов</h1>
+            <div class="tool-card">
+                <label>Префикс (напр. SUMMER):</label>
+                <input type="text" id="promo-prefix" value="TIKETON2026">
+                
+                <label>Количество:</label>
+                <input type="number" id="promo-count" value="50">
+
+                <label>Скидка (%):</label>
+                <input type="number" value="10">
+
+                <button class="action-btn" onclick="generatePromos()">🚀 Генерировать</button>
+            </div>
+
+            <div class="output-area">
+                <textarea id="promo-output" placeholder="Здесь появится список..."></textarea>
+            </div>
+        </div>
+
+
+        <!-- Вкладка 3: VPN -->
+        <div id="vpn" class="tab-content">
+            <h1>🔐 VPN User Manager</h1>
+            <p>Генерация Bash-команды для быстрого создания пользователя на сервере OpenVPN.</p>
+            
+            <div class="tool-card">
+                <label>Имя сотрудника (login):</label>
+                <input type="text" id="vpn-user" placeholder="n.sultan">
+                <button class="action-btn" onclick="generateVpnScript()">📝 Создать скрипт</button>
+            </div>
+
+            <div class="console-output" id="vpn-console">
+                > Ожидание ввода...
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
