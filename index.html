@@ -3,116 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticketon Ops Panel</title>
+    <title>Event Support Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="logo">
-            <i class="fas fa-ticket-alt"></i> T-Ops
-        </div>
+        <div class="logo"><i class="fas fa-layer-group"></i> EventOps</div>
         <ul class="menu">
-            <li class="active" onclick="showTab('monitor')"><i class="fas fa-chart-bar"></i> Мониторинг (Sync)</li>
-            <li onclick="showTab('automation')"><i class="fas fa-robot"></i> Автоматизация</li>
-            <li onclick="showTab('vpn')"><i class="fas fa-network-wired"></i> VPN Config</li>
+            <li class="active" onclick="showTab('monitor', this)"><i class="fas fa-chart-line"></i> Мониторинг (NOC)</li>
+            <li onclick="showTab('support', this)"><i class="fas fa-headset"></i> Саппорт & Инциденты</li>
+            <li onclick="showTab('automation', this)"><i class="fas fa-robot"></i> Автоматизация</li>
         </ul>
     </div>
 
     <div class="main">
         
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ СТАТУСОВ-->
+        <div class="status-bar">
+            <div class="status-item ok" id="status-site"><i class="fas fa-globe"></i> Core API: ONLINE</div>
+            <div class="status-item ok" id="status-sms"><i class="fas fa-sms"></i> SMS Provider: OK</div>
+            <div class="status-item ok" id="status-payment"><i class="fas fa-credit-card"></i> Bank Gate: OK</div>
+            <div class="status-item warn" id="status-superapp"><i class="fas fa-mobile-alt"></i> Mobile Partner: LAG (3s)</div>
+        </div>
+
         <!-- Вкладка 1: МОНИТОРИНГ -->
         <div id="monitor" class="tab-content active">
             <header>
-                <h1>Концерт: Скриптонит (Almaty Arena)</h1>
+                <h1>Событие: Grand Concert (Main Stadium)</h1>
                 <div class="server-status ok" id="gateway-status">Gateway: ONLINE</div>
             </header>
 
             <div class="dashboard">
-                <!-- Фан-зона (Счетчик) -->
                 <div class="card">
                     <h3>🔥 Фан-зона (Fan Zone)</h3>
-                    <div class="progress">
-                        <div class="bar" style="width: 98%; background: #e74c3c;"></div>
-                    </div>
-                    <p>Квота: <span id="fan-sold">98</span> / 100</p>
-                    <small>Риск овербукинга!</small>
+                    <div class="progress"><div class="bar" style="width: 98%; background: #e74c3c;"></div></div>
+                    <p>Квота: 98 / 100</p>
                 </div>
-
-                <!-- Сидячие-->
                 <div class="card">
-                    <h3>💺 Сектор А (Seated)</h3>
-                    <div class="progress">
-                        <div class="bar" style="width: 80%; background: #2ecc71;"></div>
-                    </div>
+                    <h3>💺 VIP Сектор</h3>
+                    <div class="progress"><div class="bar" style="width: 80%; background: #2ecc71;"></div></div>
                     <p>Продано: 400 / 500</p>
                 </div>
             </div>
 
-            <!-- Таблица рассинхрона -->
             <div class="incident-box">
                 <h2>🚨 Очередь транзакций (Sync Issues)</h2>
-                <p>Транзакции, где оплата прошла, а билет завис из-за сбоя шлюза.</p>
-                <button class="simulate-crash-btn" onclick="simulateCrash()">💥 Имитировать падение шлюза</button>
-                
+                <button class="simulate-crash-btn" onclick="simulateCrash()">💥 Тест: Падение шлюза</button>
                 <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Клиент</th>
-                            <th>Зона</th>
-                            <th>Статус Банка</th>
-                            <th>Статус Билета</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sync-table">
-                    </tbody>
+                    <thead><tr><th>ID</th><th>Клиент</th><th>Зона</th><th>Банк</th><th>Билет</th><th>Действие</th></tr></thead>
+                    <tbody id="sync-table"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Вкладка 2: Промики -->
-        <div id="automation" class="tab-content">
-            <h1>🛠 Генератор Промокодов</h1>
-            <div class="tool-card">
-                <label>Префикс (напр. SUMMER):</label>
-                <input type="text" id="promo-prefix" value="TIKETON2026">
-                
-                <label>Количество:</label>
-                <input type="number" id="promo-count" value="50">
-
-                <label>Скидка (%):</label>
-                <input type="number" value="10">
-
-                <button class="action-btn" onclick="generatePromos()">🚀 Генерировать</button>
+        <!-- Вкладка 2: САППОРТ -->
+        <div id="support" class="tab-content">
+            <h1>🕵️‍♂️ Диагностика и Эскалация</h1>
+            
+            <!-- Умный поиск -->
+            <div class="tool-card" style="max-width: 100%;">
+                <h3>🔍 Глобальный поиск (Search)</h3>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="search-input" placeholder="Email, QR-код, UID, Сертификат..." style="flex:1;">
+                    <button class="action-btn" style="margin:0;" onclick="smartSearch()">Найти</button>
+                </div>
+                <div id="search-result" class="console-output" style="display:none; margin-top: 15px; background: #fff; color: #333; border: 1px solid #ddd;"></div>
             </div>
 
-            <div class="output-area">
-                <textarea id="promo-output" placeholder="Здесь появится список..."></textarea>
+            <!-- Генератор тикета -->
+            <div class="tool-card" style="max-width: 100%; margin-top: 20px;">
+                <h3>📝 Создание инцидента (L3 Report)</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; color: #e74c3c;">
+                        <input type="checkbox" id="mass-incident-check" onchange="toggleMassForm()"> 🚨 ЭТО МАССОВЫЙ СБОЙ?
+                    </label>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <select id="issue-type">
+                        <option value="sms">Недоставка SMS/Email</option>
+                        <option value="payment">Ошибка оплаты (Массовая)</option>
+                        <option value="site">Сайт/Админка (502/504)</option>
+                        <option value="superapp">Partner App (Рассинхрон)</option>
+                        <option value="refund">Возвраты (Задержка)</option>
+                    </select>
+
+                    <!-- Поля для одиночного -->
+                    <div id="single-fields" style="display: contents;">
+                        <input type="text" id="esc-order" placeholder="ID Заказа / UID">
+                        <input type="text" id="esc-device" placeholder="Устройство (iPhone, Chrome)">
+                    </div>
+
+                    <!-- Поля для МАССОВОГО -->
+                    <div id="mass-fields" style="display: contents; display: none;">
+                        <input type="text" id="mass-time" placeholder="Время начала (напр. 19:45)">
+                        <input type="text" id="mass-scale" placeholder="Масштаб (напр. >50 жалоб)">
+                        <input type="text" id="mass-examples" placeholder="Примеры (3-5 UID)">
+                    </div>
+                    
+                    <input type="text" id="esc-error" placeholder="Текст ошибки / Симптомы" style="grid-column: span 2;">
+                </div>
+                
+                <button class="action-btn" onclick="generateTicket()">Сформировать отчет</button>
+                <textarea id="esc-output" style="height: 120px; margin-top: 10px;" placeholder="Шаблон отчета..."></textarea>
             </div>
         </div>
 
-
-        <!-- Вкладка 3: VPN -->
-        <div id="vpn" class="tab-content">
-            <h1>🔐 VPN User Manager</h1>
-            <p>Генерация Bash-команды для быстрого создания пользователя на сервере OpenVPN.</p>
-            
+        <!-- Вкладка 3: АВТОМАТИЗАЦИЯ -->
+        <div id="automation" class="tab-content">
+            <h1>🛠 Инструменты</h1>
             <div class="tool-card">
-                <label>Имя сотрудника (login):</label>
-                <input type="text" id="vpn-user" placeholder="n.sultan">
-                <button class="action-btn" onclick="generateVpnScript()">📝 Создать скрипт</button>
+                <h3>Генератор Промокодов</h3>
+                <input type="text" id="promo-prefix" value="PROMO2026">
+                <input type="number" id="promo-count" value="50">
+                <button class="action-btn" onclick="generatePromos()">🚀 Генерировать</button>
             </div>
-
-            <div class="console-output" id="vpn-console">
-                > Ожидание ввода...
+            <textarea id="promo-output" placeholder="Здесь появится список..."></textarea>
+            
+            <div class="tool-card" style="margin-top: 20px;">
+                <h3>VPN Config</h3>
+                <input type="text" id="vpn-user" placeholder="username">
+                <button class="action-btn" onclick="generateVpnScript()">📝 Создать скрипт</button>
+                <div class="console-output" id="vpn-console">> Ожидание...</div>
             </div>
         </div>
 
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
